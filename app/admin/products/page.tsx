@@ -58,7 +58,10 @@ export default function ProductsPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(allProducts.map(p => p.category)))];
 
@@ -125,6 +128,10 @@ export default function ProductsPage() {
     setProductToDelete(product);
     setIsDeleteDialogOpen(true);
   };
+  const openEditDialog = (product: Product) => {
+  setProductToEdit(product);
+  setIsEditDialogOpen(true);
+  };
 
   const confirmDelete = () => {
     if (!productToDelete) return;
@@ -150,12 +157,11 @@ export default function ProductsPage() {
             <h1 className="text-3xl font-bold text-white mb-2">Products</h1>
             <p className="text-gray-400">Manage your product catalog</p>
           </div>
-          <Button className="mt-4 md:mt-0 bg-red-800 hover:bg-red-700">
+          {/* <Button className="mt-4 md:mt-0 bg-red-800 hover:bg-red-700">
             <Plus className="h-4 w-4 mr-2" />
             Add New Product
-          </Button>
+          </Button> */}
         </div>
-
         {/* Filters */}
         <Card className="border-gray-800 bg-gray-950 mb-6">
           <CardContent className="p-4">
@@ -343,16 +349,28 @@ export default function ProductsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
-                          <Button variant="outline" size="sm" className="h-8 border-gray-800">
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
                           <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 border-gray-800"
+                          onClick={() => openEditDialog(product)} // tambahkan ini
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button> 
+                        <Button 
                             variant="outline" 
                             size="sm" 
                             className="h-8 border-gray-800 hover:bg-red-900/20 hover:text-red-500 hover:border-red-900/50"
                             onClick={() => openDeleteDialog(product)}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button 
+                            className="mt-4 md:mt-0 bg-red-800 hover:bg-red-700"
+                            onClick={() => setIsAddDialogOpen(true)}
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add New Product
                           </Button>
                         </div>
                       </TableCell>
@@ -364,7 +382,6 @@ export default function ProductsPage() {
           </CardContent>
         </Card>
       </div>
-      
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="bg-gray-950 border-gray-800">
@@ -391,6 +408,125 @@ export default function ProductsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+  <DialogContent className="bg-gray-950 border-gray-800">
+    <DialogHeader>
+      <DialogTitle className="text-white">Edit Product</DialogTitle>
+    </DialogHeader>
+    {productToEdit && (
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const updatedProduct = {
+      ...productToEdit,
+      name: formData.get("name") as string,
+      price: parseFloat(formData.get("price") as string),
+      description: formData.get("description") as string,
+    };
+
+    const updatedProducts = allProducts.map((p) =>
+      p.id === productToEdit.id ? updatedProduct : p
+    );
+    setProducts(updatedProducts);
+
+    toast({
+      title: "Product updated",
+      description: `${updatedProduct.name} has been updated successfully.`,
+    });
+
+    setIsEditDialogOpen(false);
+    setProductToEdit(null);
+  }}
+>
+        <div className="space-y-4">
+          <Input
+            name="name"
+            defaultValue={productToEdit.name}
+            placeholder="Product Name"
+            className="bg-gray-900 text-white border-gray-800"
+          />
+          <Input
+            name="price"
+            type="number"
+            defaultValue={productToEdit.price}
+            placeholder="Price"
+            className="bg-gray-900 text-white border-gray-800"
+          />
+          <Input
+            name="description"
+            defaultValue={productToEdit.description}
+            placeholder="Description"
+            className="bg-gray-900 text-white border-gray-800"
+          />
+        </div>
+        <DialogFooter className="mt-4">
+          <Button
+            variant="outline"
+            className="border-gray-800"
+            type="button"
+            onClick={() => setIsEditDialogOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
+        </DialogFooter>
+      </form>
+    )}
+  </DialogContent>
+</Dialog>
+<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+  <DialogContent className="bg-gray-950 border-gray-800">
+    <DialogHeader>
+      <DialogTitle className="text-white">Add New Product</DialogTitle>
+    </DialogHeader>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newProduct: Product = {
+          id: (Date.now()).toString(), // generate ID unik
+          name: formData.get("name") as string,
+          price: parseFloat(formData.get("price") as string),
+          description: formData.get("description") as string,
+          image: formData.get("image") as string || "/placeholder.png",
+          category: formData.get("category") as string || "uncategorized",
+          rating: 0,
+          inStock: true,
+          featured: false,
+        };
+
+        setProducts([newProduct, ...products]);
+
+        toast({
+          title: "Product added",
+          description: `${newProduct.name} has been added successfully.`,
+        });
+
+        setIsAddDialogOpen(false);
+      }}
+    >
+      <div className="space-y-4">
+        <Input name="name" placeholder="Product Name" className="bg-gray-900 text-white border-gray-800" />
+        <Input name="price" type="number" placeholder="Price" className="bg-gray-900 text-white border-gray-800" />
+        <Input name="description" placeholder="Description" className="bg-gray-900 text-white border-gray-800" />
+        <Input name="image" placeholder="Image URL" className="bg-gray-900 text-white border-gray-800" />
+        <Input name="category" placeholder="Category" className="bg-gray-900 text-white border-gray-800" />
+      </div>
+      <DialogFooter className="mt-4">
+        <Button 
+          variant="outline" 
+          className="border-gray-800" 
+          type="button" 
+          onClick={() => setIsAddDialogOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button type="submit">Add</Button>
+      </DialogFooter>
+    </form>
+  </DialogContent>
+</Dialog>
     </AdminLayout>
   );
 }

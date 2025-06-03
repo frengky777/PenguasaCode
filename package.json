@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@next/swc-wasm-nodejs": "13.5.1",
+    "@prisma/client": "^6.8.2",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -77,5 +78,13 @@
     "@types/pg": "^8.15.2",
     "@types/uuid": "^10.0.0",
     "prisma": "^6.8.2"
-  }
+  },
+  "description": "Nama Kelompok 13 :\r Frengky / 231712524\r Sastra satria Narantaka / 231712548\r Destinus Yeskel Mom / 231712358\r Yogi mukta / 231712549",
+  "main": "next.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

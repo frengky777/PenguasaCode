@@ -8,7 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Star, Truck, ShieldCheck, ArrowLeft, Plus, Minus, ShoppingCart } from "lucide-react";
+import {
+  Star,
+  Truck,
+  ShieldCheck,
+  ArrowLeft,
+  Plus,
+  Minus,
+  ShoppingCart,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -22,21 +30,26 @@ export function ProductClient() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Perubahan: Bungkus fetching dalam blok if dan ubah urutan setIsLoading
     if (params?.id) {
       const foundProduct = getProductById(params.id as string);
       if (foundProduct) {
         setProduct(foundProduct);
-        const featured = getFeaturedProducts().filter(p => p.id !== foundProduct.id);
+        const featured = getFeaturedProducts().filter(
+          (p) => p.id !== foundProduct.id
+        );
         setRelatedProducts(featured.slice(0, 4));
       }
     }
-    setIsLoading(false);
+    setIsLoading(false); // dipindah ke akhir agar hanya dijalankan setelah proses selesai
   }, [params]);
 
+  // Perubahan: logika jika produk tidak ditemukan setelah loading selesai
   if (!isLoading && !product) {
-    notFound();
+    notFound(); // next/navigation
   }
 
+  // Loading state (tidak berubah)
   if (!product) {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center">
@@ -45,8 +58,12 @@ export function ProductClient() {
     );
   }
 
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  // Handler kuantitas
+  const incrementQuantity = () => setQuantity((prev) => prev + 1);
+  const decrementQuantity = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+  // Handler tambah ke cart
   const addToCart = () => {
     toast({
       title: "Added to cart",
@@ -57,9 +74,8 @@ export function ProductClient() {
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-black relative">
-      {/* Sama persis dengan isi return dari sebelumnya */}
-      {/* Kamu bisa tempel ulang semua UI produk di sini seperti yang sudah kamu punya */}
-      {/* Agar lebih ringkas, tidak aku ulang di sini karena sudah panjang dan tidak berubah */}
+      {/* UI produk detail seharusnya ditempel di sini */}
+      {/* Komponen untuk menampilkan detail produk */}
     </div>
   );
 }
