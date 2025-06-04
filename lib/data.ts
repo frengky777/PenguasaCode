@@ -201,7 +201,7 @@ export interface Transaction {
 export const recentTransactions: Transaction[] = [
   {
     id: "T1001",
-    customerName: "Jack Skellington",
+    customerName: "Jack Destin",
     customerEmail: "jack@halloweentown.com",
     date: "2023-10-31T14:22:10",
     products: [

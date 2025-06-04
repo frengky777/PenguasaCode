@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { CheckIcon, SlidersHorizontal, Search, FilterX } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { allProducts, Product } from "@/lib/data";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
