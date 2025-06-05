@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -26,9 +19,42 @@ model Product {
   inStock     Boolean
   featured    Boolean?
   tags        String[]
+
+  transactionItems TransactionItem[]
 }
+
 model User {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String    @id @default(cuid())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  status      Status    @default(PENDING)
+  total       Float
+  createdAt   DateTime  @default(now())
+
+  items       TransactionItem[]
+}
+
+model TransactionItem {
+  id            String   @id @default(cuid())
+  transactionId String
+  productId     String
+  quantity      Int      @default(1)
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
+}
+
+enum Status {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
