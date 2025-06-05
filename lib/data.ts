@@ -9,7 +9,7 @@ export interface Product {
   rating: number;
   inStock: boolean;
   featured?: boolean;
-  tags?: string[];
+  tags?: string[];        
 }
 
 export const bestSellerProducts: Product[] = [
