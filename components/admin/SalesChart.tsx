@@ -10,12 +10,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// ✅ Gunakan prop agar bisa pakai data dinamis dari server (jika nanti dibutuhkan)
+// ✅ Komponen ini menerima data dinamis (misal dari server)
 type Props = {
   data: { name: string; sales: number }[];
 };
 
-// ✅ Jika tidak dikirim data, fallback ke dummy
+// ✅ Dummy fallback jika tidak ada data dikirim
 const defaultData = [
   { name: "Jan", sales: 4000 },
   { name: "Feb", sales: 3000 },
@@ -54,7 +54,10 @@ export default function SalesChart({ data = defaultData }: Props) {
             stroke="#6B7280"
             tickLine={false}
             axisLine={false}
-            tickFormatter={(v) => `$${v}`}
+            // ✅ Ganti formatter ke Rupiah
+            tickFormatter={(v) =>
+              "Rp " + v.toLocaleString("id-ID", { maximumFractionDigits: 0 })
+            }
           />
           <Tooltip
             contentStyle={{
@@ -63,7 +66,11 @@ export default function SalesChart({ data = defaultData }: Props) {
               borderRadius: "4px",
               color: "#F9FAFB",
             }}
-            formatter={(v) => [`$${v}`, "Sales"]}
+            // ✅ Tooltip juga pakai format Rupiah
+            formatter={(v) => [
+              "Rp " + Number(v).toLocaleString("id-ID", { maximumFractionDigits: 0 }),
+              "Penjualan",
+            ]}
             cursor={{ fill: "rgba(107, 114, 128, 0.1)" }}
           />
           <Bar

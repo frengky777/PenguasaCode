@@ -1,6 +1,5 @@
 "use client";
 
-import { Transaction } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -19,16 +18,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+
+type TransactionWithUser = {
+  id: string;
+  status: "pending" | "shipped" | "delivered" | "cancelled";
+  total: number;
+  createdAt: Date;
+  user: {
+    name: string;
+    email: string;
+  };
+};
 
 interface TransactionsTableProps {
-  transactions: Transaction[];
+  transactions: TransactionWithUser[];
 }
-
 export function TransactionsTable({ transactions }: TransactionsTableProps) {
-  // Status badge styling
-  const getStatusBadge = (status: Transaction["status"]) => {
-    switch(status) {
+  const getStatusBadge = (status: TransactionWithUser["status"]) => {
+    switch (status) {
       case "pending":
         return <Badge variant="outline" className="bg-yellow-900/20 text-yellow-400 border-yellow-800">Pending</Badge>;
       case "shipped":
@@ -59,7 +66,6 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
             <TableHead className="text-gray-400">Customer</TableHead>
             <TableHead className="text-gray-400">Date</TableHead>
             <TableHead className="text-gray-400">Status</TableHead>
-            <TableHead className="text-gray-400">Items</TableHead>
             <TableHead className="text-gray-400 text-right">Total</TableHead>
             <TableHead className="text-gray-400 text-right w-[80px]">Actions</TableHead>
           </TableRow>
@@ -70,18 +76,15 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
               <TableCell className="font-medium text-white">{transaction.id}</TableCell>
               <TableCell>
                 <div>
-                  <p className="text-white">{transaction.customerName}</p>
-                  <p className="text-gray-400 text-sm">{transaction.customerEmail}</p>
+                  <p className="text-white">{transaction.user.name}</p>
+                  <p className="text-gray-400 text-sm">{transaction.user.email}</p>
                 </div>
               </TableCell>
               <TableCell className="text-gray-400">
-                {format(new Date(transaction.date), "MMM d, yyyy")}
+                {format(new Date(transaction.createdAt), "MMM d, yyyy")}
               </TableCell>
               <TableCell>
                 {getStatusBadge(transaction.status)}
-              </TableCell>
-              <TableCell className="text-gray-400">
-                {transaction.products.length} {transaction.products.length === 1 ? "item" : "items"}
               </TableCell>
               <TableCell className="text-right font-medium text-white">
                 ${transaction.total.toFixed(2)}

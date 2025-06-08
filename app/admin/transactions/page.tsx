@@ -1,63 +1,76 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { TransactionsTable } from "@/components/admin/TransactionsTable";
-import { recentTransactions, Transaction } from "@/lib/data";
-import { 
-  Download, 
-  Calendar, 
-  Search, 
-  Filter,
-  ArrowUpDown
-} from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+  Download,
+  Calendar,
+  Search
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+// ✅ Kompatibel dengan komponen TransactionsTable
+type TransactionWithUser = {
+  id: string;
+  userId: number;
+  status: "pending" | "shipped" | "delivered" | "cancelled";
+  total: number;
+  createdAt: Date;
+  user: {
+    name: string;
+    email: string;
+  };
+};
+
 export default function TransactionsPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>(recentTransactions);
+  const [transactions, setTransactions] = useState<TransactionWithUser[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [date, setDate] = useState<Date | undefined>(undefined);
-  
-  // Filter transactions based on search, status, and date
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const res = await fetch("/api/transactions");
+        const data = await res.json();
+        setTransactions(data);
+      } catch (error) {
+        console.error("Failed to load transactions", error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
   const filteredTransactions = transactions.filter(transaction => {
-    // Search filter
-    const searchMatch = 
-      transaction.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const searchMatch =
+      transaction.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       transaction.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Status filter
+
     const statusMatch = statusFilter === "all" || transaction.status === statusFilter;
-    
-    // Date filter
+
     let dateMatch = true;
     if (date) {
-      const transactionDate = new Date(transaction.date);
-      dateMatch = 
+      const transactionDate = new Date(transaction.createdAt);
+      dateMatch =
         transactionDate.getDate() === date.getDate() &&
         transactionDate.getMonth() === date.getMonth() &&
         transactionDate.getFullYear() === date.getFullYear();
     }
-    
+
     return searchMatch && statusMatch && dateMatch;
   });
 
@@ -90,7 +103,7 @@ export default function TransactionsPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              
+
               {/* Status Filter */}
               <div>
                 <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
@@ -107,7 +120,7 @@ export default function TransactionsPage() {
                   </TabsList>
                 </Tabs>
               </div>
-              
+
               {/* Date Filter */}
               <div>
                 <Popover>
