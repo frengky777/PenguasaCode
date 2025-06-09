@@ -1,13 +1,8 @@
-import { fetchAllProducts } from "@/lib/fetchData";
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import ClientProductsTable from "./ClientProductsTable";
+import { getDashboardData } from "@/lib/fetchDashboard";
+import DashboardPage from "./DashboardPage";
 
-export default async function ProductsPage() {
-  const products = await fetchAllProducts();
+export default async function AdminDashboardPage() {
+  const data = await getDashboardData();
 
-  return (
-    <AdminLayout>
-      <ClientProductsTable initialProducts={products} />
-    </AdminLayout>
-  );
-}
+  return <DashboardPage initialData={data} />;
+};

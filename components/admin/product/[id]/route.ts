@@ -1,18 +1,48 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: params.id },
-    });
+    const data = await req.json();
 
-    if (!product) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    // ✅ Validasi: data tidak boleh kosong
+    if (!data || Object.keys(data).length === 0) {
+      return NextResponse.json(
+        { error: "Tidak ada data yang dikirim" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(product);
+    const updated = await prisma.product.update({
+      where: { id: params.id },
+      data,
+    });
+
+    return NextResponse.json(updated);
   } catch (error) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error("PATCH /api/products/[id] error:", error);
+    return NextResponse.json(
+      { error: "Gagal memperbarui produk" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  _: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await prisma.product.delete({ where: { id: params.id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("DELETE /api/products/[id] error:", error);
+    return NextResponse.json(
+      { error: "Gagal menghapus produk" },
+      { status: 500 }
+    );
   }
 }

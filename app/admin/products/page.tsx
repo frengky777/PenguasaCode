@@ -1,5 +1,5 @@
-import { fetchAllProducts } from "@/lib/fetchData";
-import ClientProductsTable from "../dashboard/ClientProductsTable";
+import { fetchAllProducts } from "../../../lib/fetchDashboard";
+import { ClientProducts } from "./ProductClien"; 
 import { AdminLayout } from "@/components/admin/AdminLayout";
 
 export default async function ProductsPage() {
@@ -7,7 +7,7 @@ export default async function ProductsPage() {
 
   return (
     <AdminLayout>
-      <ClientProductsTable initialProducts={products} />
+      <ClientProducts initialProducts={products} />
     </AdminLayout>
   );
 }

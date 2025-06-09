@@ -21,7 +21,7 @@ import {
 
 type TransactionWithUser = {
   id: string;
-  status: "pending" | "shipped" | "delivered" | "cancelled";
+  status: "PENDING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
   total: number;
   createdAt: Date;
   user: {
@@ -36,13 +36,13 @@ interface TransactionsTableProps {
 export function TransactionsTable({ transactions }: TransactionsTableProps) {
   const getStatusBadge = (status: TransactionWithUser["status"]) => {
     switch (status) {
-      case "pending":
+      case "PENDING":
         return <Badge variant="outline" className="bg-yellow-900/20 text-yellow-400 border-yellow-800">Pending</Badge>;
-      case "shipped":
+      case "SHIPPED":
         return <Badge variant="outline" className="bg-blue-900/20 text-blue-400 border-blue-800">Shipped</Badge>;
-      case "delivered":
+      case "DELIVERED":
         return <Badge variant="outline" className="bg-green-900/20 text-green-400 border-green-800">Delivered</Badge>;
-      case "cancelled":
+      case "CANCELLED":
         return <Badge variant="outline" className="bg-red-900/20 text-red-400 border-red-800">Cancelled</Badge>;
       default:
         return <Badge variant="outline">Unknown</Badge>;
