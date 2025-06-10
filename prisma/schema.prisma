@@ -8,20 +8,21 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  price       Float
-  oldPrice    Float?
-  description String
-  image       String
-  category    String
-  rating      Float
-  inStock     Boolean
-  featured    Boolean?
-  tags        String[]
+  id          String   @id @default(uuid())        
+  name        String                               
+  price       Float                               
+  oldPrice    Float?                              
+  description String                              
+  image       String                              
+  category    String                              
+  rating      Float                        
+  inStock     Boolean                            
+  featured    Boolean?                            
+  tags        String[]                            
 
-  transactionItems TransactionItem[]
+  transactionItems TransactionItem[]              
 }
+
 
 model User {
   id       Int     @id @default(autoincrement())
