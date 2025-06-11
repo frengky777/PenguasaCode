@@ -3,7 +3,11 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
-
+const DialogDescription = ({ children }: React.PropsWithChildren) => (
+  <DialogPrimitive.Description className="text-sm text-gray-400">
+    {children}
+  </DialogPrimitive.Description>
+);
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogClose = DialogPrimitive.Close;
@@ -44,4 +48,5 @@ export {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription
 };
